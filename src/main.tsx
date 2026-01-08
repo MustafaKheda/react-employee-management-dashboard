@@ -4,6 +4,7 @@ import App from "./App";
 import { AuthProvider } from "./context/AuthContext";
 import { EmployeeProvider } from "./context/EmployeeContext";
 
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <AuthProvider>
