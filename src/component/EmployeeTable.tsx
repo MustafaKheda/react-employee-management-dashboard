@@ -1,120 +1,181 @@
+import { useMemo, useState } from "react";
 import { useEmployees } from "../context/EmployeeContext";
+import type { Employee } from "../types/employee";
+import ActionMenu from "./common/ActionMenu";
+import { StatusToggle } from "./common/StatusToggle";
 
-export default function EmployeeTable() {
-  const { employees, updateEmployee, deleteEmployee } = useEmployees();
+export default function EmployeeTable({ openEditModal }: { openEditModal: (v: Employee, type: "EDIT" | "DELETE") => void }) {
+    const { employees, updateEmployee } = useEmployees();
+    /* ✅ Filter STATEs */
+    const [genderFilter, setGenderFilter] = useState<"all" | "Male" | "Female" | "Other">("all");
+    const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+    const [search, setSearch] = useState("");
 
-  const handlePrint = () => {
-    window.print();
-  };
 
-  return (
-    <div className="bg-white border border-[#E5E7EB] rounded-lg overflow-x-auto">
-      <table className="min-w-full text-sm">
-        <thead className="bg-[#F1F5F9] text-left">
-          <tr>
-            <th className="p-3">ID</th>
-            <th className="p-3">Profile</th>
-            <th className="p-3">Name</th>
-            <th className="p-3">Gender</th>
-            <th className="p-3">DOB</th>
-            <th className="p-3">State</th>
-            <th className="p-3">Status</th>
-            <th className="p-3">Actions</th>
-          </tr>
-        </thead>
+    /* ✅ FILTERED DATA */
+    const filteredEmployees = useMemo(() => {
+        return employees.filter(emp => {
+            const matchName = emp.name
+                .toLowerCase()
+                .includes(search.toLowerCase());
 
-        <tbody>
-          {employees.length === 0 && (
-            <tr>
-              <td colSpan={8} className="p-6 text-center text-[#6B7280]">
-                No employees found
-              </td>
-            </tr>
-          )}
+            const matchGender =
+                genderFilter === "all" || emp.gender === genderFilter;
 
-          {employees.map(emp => (
-            <tr key={emp.id} className="border-t">
-              {/* Employee ID */}
-              <td className="p-3 text-xs text-[#6B7280]">
-                {emp.id.slice(0, 8)}
-              </td>
+            const matchStatus =
+                statusFilter === "all" ||
+                (statusFilter === "active" && emp.active) ||
+                (statusFilter === "inactive" && !emp.active);
 
-              {/* Profile Image */}
-              <td className="p-3">
-                {emp.image ? (
-                  <img
-                    src={emp.image}
-                    alt={emp.name}
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-gray-300" />
-                )}
-              </td>
+            return matchName && matchGender && matchStatus;
+        });
+    }, [employees, search, genderFilter, statusFilter]);
 
-              {/* Name */}
-              <td className="p-3 text-[#1F2937] font-medium">
-                {emp.name}
-              </td>
 
-              {/* Gender */}
-              <td className="p-3">{emp.gender}</td>
 
-              {/* DOB */}
-              <td className="p-3">{emp.dob}</td>
+    return (
+        <div className="bg-white border border-[#E5E7EB] rounded-lg overflow-x-auto">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#E5E7EB]">
+                <div className="flex items-center gap-3">
+                    <h2 className="text-lg font-medium text-[#1F2937]">
+                        Employees List
+                    </h2>
+                </div>
 
-              {/* State */}
-              <td className="p-3">{emp.state}</td>
 
-              {/* Active / Inactive Toggle */}
-              <td className="p-3">
-                <label className="inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={emp.active}
-                    onChange={() =>
-                      updateEmployee(emp.id, { active: !emp.active })
-                    }
-                    className="sr-only"
-                  />
-                  <span
-                    className={`w-10 h-5 rounded-full transition ${
-                      emp.active
-                        ? "bg-[#22B8A7]"
-                        : "bg-gray-300"
-                    }`}
-                  >
-                    <span
-                      className={`block w-4 h-4 bg-white rounded-full mt-0.5 ml-0.5 transition ${
-                        emp.active ? "translate-x-5" : ""
-                      }`}
-                    />
-                  </span>
-                </label>
-              </td>
+                <div className="flex justify-end items-center gap-3">
+                    <button
+                        onClick={() => window.print()}
+                        className="px-4 py-2 border-[#E5E7EB] border rounded-md text-sm"
+                    >
+                        Print List
+                    </button>
 
-              {/* Actions */}
-              <td className="p-3 space-x-3">
-                <button className="text-blue-600 hover:underline">
-                  Edit
-                </button>
-                <button
-                  onClick={() => deleteEmployee(emp.id)}
-                  className="text-red-600 hover:underline"
-                >
-                  Delete
-                </button>
-                <button
-                  onClick={handlePrint}
-                  className="text-[#22B8A7] hover:underline"
-                >
-                  Print
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+                    {/* Gender Filter */}
+                    <select
+                        value={genderFilter}
+                        onChange={e =>
+                            setGenderFilter(e.target.value as any)
+                        }
+                        className="px-3 py-2 text-sm border border-[#E5E7EB] rounded-md"
+                    >
+                        <option value="all">All Genders</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+
+                    {/* Status Filter */}
+                    <select
+                        value={statusFilter}
+                        onChange={e =>
+                            setStatusFilter(e.target.value as any)
+                        }
+                        className="px-3 py-2 text-sm border border-[#E5E7EB] rounded-md"
+                    >
+                        <option value="all">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+
+                    {/* Search */}
+                    <div className="flex items-center border border-[#E5E7EB] rounded-md overflow-hidden">
+                        <input
+                            type="text"
+                            placeholder="Search"
+                            onChange={e => setSearch(e.target.value)}
+                            className=" pl-3 text-sm outline-none"
+                        />
+                        <button className="px-3 py-2 bg-[#22B8A7] text-white">
+                            🔍
+                        </button>
+
+                    </div>
+
+                </div>
+                {/* Search */}
+
+            </div>
+
+            <table className="w-full text-sm">
+                <thead className="bg-[#F1F5F9] text-[#374151]">
+                    <tr>
+                        <th className="p-3 text-left font-medium">Employee Name</th>
+                        <th className="p-3 text-left font-medium">Gender</th>
+                        <th className="p-3 text-left font-medium">DOB</th>
+                        <th className="p-3 text-left font-medium">State</th>
+                        <th className="p-3 text-center font-medium">Status</th>
+                        <th className="p-3 text-center font-medium print:hidden">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {filteredEmployees.map(emp => (
+                        <tr
+                            key={emp.id}
+                            className="border-t border-[#E5E7EB] hover:bg-[#F9FAFB]"
+                        >
+                            {/* Name */}
+                            <td className="p-3">
+                                <div className="flex items-center gap-3">
+                                    {/* Avatar */}
+                                    {emp.image ? (
+                                        <img
+                                            src={emp.image}
+                                            alt={emp.name}
+                                            className="w-9 h-9 rounded-full border-gray-500 object-cover border"
+                                        />
+                                    ) : (
+                                        <div className="w-9 h-9 rounded-full border border-gray-500 bg-gray-200
+                      flex items-center justify-center
+                      text-sm font-medium text-gray-600">
+                                            {emp.name.charAt(0)}
+                                        </div>
+                                    )}
+
+                                    {/* Name */}
+                                    <span className="text-[#1F2937] font-medium">
+                                        {emp.name}
+                                    </span>
+                                </div>
+                            </td>
+
+                            <td className="p-3">{emp.gender}</td>
+                            <td className="p-3">{emp.dob}</td>
+                            <td className="p-3">{emp.state}</td>
+
+                            {/* Status */}
+                            <td className="p-3">
+                                <StatusToggle
+                                    checked={emp.active}
+                                    onChange={() =>
+                                        updateEmployee(emp.id, { active: !emp.active })
+                                    }
+                                />
+                            </td>
+
+                            {/* Action */}
+                            <td className="p-3 flex justify-center">
+                                <ActionMenu
+                                    onEdit={() => openEditModal(emp, "EDIT")}
+                                    onDelete={() => openEditModal(emp, "DELETE")}
+                                />
+                            </td>
+                        </tr>
+                    ))}
+
+                    {employees.length === 0 && (
+                        <tr>
+                            <td
+                                colSpan={6}
+                                className="p-6 text-center text-[#6B7280]"
+                            >
+                                No employees found
+                            </td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        </div>
+    );
 }

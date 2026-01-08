@@ -1,1 +1,31 @@
 @import "tailwindcss"; 
+
+@media print {
+  /* Hide everything by default */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Show only the table */
+  table,
+  table * {
+    visibility: visible;
+  }
+  .print{
+
+  }
+
+  /* Position table at top */
+  table {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  /* Hide action buttons, toggles, menus */
+  button,
+  .no-print {
+    display: none !important;
+  }
+}

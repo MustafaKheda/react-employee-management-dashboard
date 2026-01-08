@@ -1,73 +1,89 @@
-# React + TypeScript + Vite
+# Employee Management Portal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Project Overview
 
-Currently, two official plugins are available:
+The Employee Management Portal is a frontend web application designed to manage employee records through a modern admin-style interface.
+It allows users to add, edit, delete, search, filter, activate/deactivate, and print employee information efficiently.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This project was built as a frontend assignment with a focus on **clean UI/UX**, **component reusability**, and **real-world dashboard patterns**.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack Used
 
-## Expanding the ESLint configuration
+* **React** (with TypeScript)
+* **Tailwind CSS** – UI styling and responsive design
+* **Context API** – global state management
+* **LocalStorage** – client-side data persistence
+* **Vite** – development and build tooling
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Steps to Run the Project Locally
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. **Clone the repository**
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+   ```bash
+   git clone <repository-url>
+   cd employee-management-portal
+   ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. **Install dependencies**
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+   ```bash
+   npm install
+   ```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+3. **Start the development server**
+
+   ```bash
+   npm run dev
+   ```
+
+4. **Open in browser**
+
+   ```
+   http://localhost:5173
+   ```
+
+---
+
+## Features
+
+* Login with basic mock authentication
+* Employee dashboard with summary:
+
+  * Total Employees
+  * Active Employees
+  * Inactive Employees
+* Employee list with:
+
+  * Profile image
+  * Name, gender, DOB, state
+  * Active / Inactive toggle
+* Add & Edit employee using a reusable modal form
+* Drag-and-drop image upload with preview
+* Search employees by name
+* Filter employees by:
+
+  * Gender
+  * Active / Inactive status
+* Combined search and filters
+* Action menu with:
+
+  * Edit
+  * Delete (with confirmation)
+  * Print
+* Print entire employee list with print-optimized layout
+* Responsive and accessible UI
+
+---
+
+## Assumptions & Design Decisions
+
+* Authentication is mocked on the frontend for demonstration purposes.
+* All employee data is stored in **LocalStorage** to persist across reloads.
+* A single reusable form is used for both **Add** and **Edit** operations.
+* Employee status is managed directly from the table using a toggle switch.
+* Print functionality uses native browser print with print-specific CSS.
+* The UI follows enterprise admin dashboard patterns for clarity and usability.
