@@ -1,4 +1,7 @@
+import { useAuth } from "../../context/AuthContext";
+
 export default function Header() {
+  const { logout } = useAuth();
   return (
     <header className="bg-white border-b border-[#E5E7EB] shadow-sm ">
       <div className="max-w-[95%] mx-auto px-6 h-16 flex items-center justify-between">
@@ -30,6 +33,14 @@ export default function Header() {
           <button className="w-8 h-8 rounded-full bg-[#E6F7F4]
                              text-[#22B8A7] font-medium">
             R
+          </button>
+
+          <button
+            onClick={logout}
+            className="px-4 py-2 text-sm border border-[#E5E7EB]
+                       rounded-md hover:bg-[#F1F5F9]"
+          >
+            Logout
           </button>
         </div>
       </div>
