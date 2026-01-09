@@ -38,9 +38,6 @@ export default function EmployeeTable({ openEditModal }: { openEditModal: (v: Em
         });
     }, [employees, search, genderFilter, statusFilter]);
 
-
-    const totalPages = Math.ceil(filteredEmployees.length / rowsPerPage);
-
     const paginatedEmployees = useMemo(() => {
         const start = (currentPage - 1) * rowsPerPage;
         return filteredEmployees.slice(start, start + rowsPerPage);
