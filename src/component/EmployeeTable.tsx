@@ -1,16 +1,23 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useEmployees } from "../context/EmployeeContext";
 import type { Employee } from "../types/employee";
 import ActionMenu from "./common/ActionMenu";
 import { StatusToggle } from "./common/StatusToggle";
+import Pagination from "./common/Pagination";
 
 export default function EmployeeTable({ openEditModal }: { openEditModal: (v: Employee, type: "EDIT" | "DELETE") => void }) {
     const { employees, updateEmployee } = useEmployees();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+
     /* ✅ Filter STATEs */
     const [genderFilter, setGenderFilter] = useState<"all" | "Male" | "Female" | "Other">("all");
     const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
     const [search, setSearch] = useState("");
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [search, genderFilter, statusFilter, rowsPerPage]);
 
     /* ✅ FILTERED DATA */
     const filteredEmployees = useMemo(() => {
@@ -32,6 +39,12 @@ export default function EmployeeTable({ openEditModal }: { openEditModal: (v: Em
     }, [employees, search, genderFilter, statusFilter]);
 
 
+    const totalPages = Math.ceil(filteredEmployees.length / rowsPerPage);
+
+    const paginatedEmployees = useMemo(() => {
+        const start = (currentPage - 1) * rowsPerPage;
+        return filteredEmployees.slice(start, start + rowsPerPage);
+    }, [filteredEmployees, currentPage, rowsPerPage]);
 
     return (
         <div className="bg-white border border-[#E5E7EB] rounded-lg overflow-x-auto">
@@ -110,7 +123,7 @@ export default function EmployeeTable({ openEditModal }: { openEditModal: (v: Em
                 </thead>
 
                 <tbody>
-                    {filteredEmployees.map(emp => (
+                    {paginatedEmployees.map(emp => (
                         <tr
                             key={emp.id}
                             className="border-t border-[#E5E7EB] hover:bg-[#F9FAFB]"
@@ -176,6 +189,13 @@ export default function EmployeeTable({ openEditModal }: { openEditModal: (v: Em
                     )}
                 </tbody>
             </table>
+            <Pagination
+                currentPage={currentPage}
+                totalItems={filteredEmployees.length}
+                rowsPerPage={rowsPerPage}
+                onPageChange={setCurrentPage}
+                onRowsPerPageChange={setRowsPerPage}
+            />
         </div>
     );
 }
