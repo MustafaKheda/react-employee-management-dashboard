@@ -11,7 +11,7 @@ export default function Header() {
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 border-2 border-[#22B8A7] rounded-sm" />
             <span className="font-semibold text-[#1F2937]">
-              Admin Portal
+              Employee Portal
             </span>
           </div>
 
